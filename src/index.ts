@@ -7,15 +7,15 @@ dotenv.config();
 const { Client, LocalAuth } = pkg;
 
 import { ChatGPTAPI } from "./chat-api.js";
+import { appendToJson } from "./util.js";
 
 async function main(msg: string) {
   const api = new ChatGPTAPI({
     sessionToken: process.env.SESSION_TOKEN as string,
   });
-  console.log("endure Auth");
+
   await api.ensureAuth();
 
-  console.log("Send Msg");
   const response = await api.sendMessage(msg);
 
   return response;
@@ -36,8 +36,16 @@ client.on("ready", () => {
     console.log(message.body);
     main(message.body)
       .then((res) => {
-        console.log(res);
+        console.log(message);
         client.sendMessage(message.from, res);
+        appendToJson({
+          userId: message.id.id,
+          mobile: message.from,
+          question: message.body,
+          answer: res,
+          device: message.deviceType,
+          date: Date.now(),
+        });
       })
       .catch((err) => console.log(err));
   });
