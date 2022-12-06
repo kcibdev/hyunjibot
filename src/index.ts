@@ -31,12 +31,9 @@ client.on("qr", (qr: any) => {
 });
 
 client.on("ready", () => {
-  console.log("Client is ready!");
   client.on("message", (message: any) => {
-    console.log(message.body);
     main(message.body)
       .then((res) => {
-        console.log(message);
         client.sendMessage(message.from, res);
         appendToJson({
           userId: message.id.id,
@@ -52,7 +49,7 @@ client.on("ready", () => {
 });
 // Save session values to the file upon successful auth
 client.on("authenticated", (session: any) => {
-  console.log("Auth success");
+  console.log("Started Authorization");
 });
 
 client.initialize();
